@@ -1,0 +1,99 @@
+﻿@page "/Rubik"
+@rendermode InteractiveServer
+@using Model.RubikCube
+@using Model.Geometry
+@using Interfaces
+@inject IRubikSimulator simulator
+
+
+<PageTitle>Rubik</PageTitle>
+
+<h1>Rubik</h1>
+
+
+@foreach (string command in RubikCommand.CommandList)
+{
+    <button class="btn btn-primary" @onclick="() => ExecuteCommand(command)">@command</button>
+}
+
+
+<table>
+    @for (int i = 0; i < 3; i++)
+    {
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="@cubePresentation.YPlus[i,0]"></td>
+            <td class="@cubePresentation.YPlus[i,1]"></td>
+            <td class="@cubePresentation.YPlus[i,2]"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    }
+    @for (int i = 0; i < 3; i++)
+    {
+        <tr>
+            <td class="@cubePresentation.XMinus[i,0]"></td>
+            <td class="@cubePresentation.XMinus[i,1]"></td>
+            <td class="@cubePresentation.XMinus[i,2]"></td>
+            <td class="@cubePresentation.ZMinus[i,0]"></td>
+            <td class="@cubePresentation.ZMinus[i,1]"></td>
+            <td class="@cubePresentation.ZMinus[i,2]"></td>
+            <td class="@cubePresentation.XPlus[i,0]"></td>
+            <td class="@cubePresentation.XPlus[i,1]"></td>
+            <td class="@cubePresentation.XPlus[i,2]"></td>
+            <td class="@cubePresentation.ZPlus[i,0]"></td>
+            <td class="@cubePresentation.ZPlus[i,1]"></td>
+            <td class="@cubePresentation.ZPlus[i,2]"></td>
+        </tr>
+    }
+    @for (int i = 0; i < 3; i++)
+    {
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="@cubePresentation.YMinus[i,0]"></td>
+            <td class="@cubePresentation.YMinus[i,1]"></td>
+            <td class="@cubePresentation.YMinus[i,2]"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    }
+
+
+</table>
+
+<button class="btn btn-primary" @onclick="Reset">Reset</button>
+@code {
+    
+    public Cube cube { get; set; } = new Cube();
+    public CubePresentation cubePresentation { get; set; }
+
+    protected override void OnInitialized()
+    {
+        cubePresentation = new CubePresentation(cube);
+        base.OnInitialized();
+    }
+    private void Reset()
+    {
+        cube = new Cube();
+        cubePresentation = new CubePresentation(cube);
+    }
+    private void ExecuteCommand(string command)
+    {
+
+        simulator.ExecuteCommand(RubikCommand.FromText(command), cube);
+
+        cubePresentation = new CubePresentation(cube);
+    }
+}
